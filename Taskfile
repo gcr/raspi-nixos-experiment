@@ -1,0 +1,24 @@
+#!/bin/bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+#WHISPER="/Users/kimmy/Desktop/whisper.cpp/build/bin/main"
+WHISPER="$SCRIPT_DIR"/../main
+
+ext=m4a
+
+function build-sd-card {
+    docker run --rm -it -v .:/mnt/ \
+        nixos/nix bash -c 'nix build --extra-experimental-features nix-command --extra-experimental-features flakes \
+        /mnt/#images.rpi4; \
+        cp result/sd-image/*.img /mnt/'
+}
+
+
+function help {
+    echo "$0 <task> <args>"
+    echo "Tasks:"
+    compgen -A function | cat -n
+}
+
+TIMEFORMAT="Task completed in %3lR"
+time ${@:-help}
